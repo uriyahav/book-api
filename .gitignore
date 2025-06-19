@@ -1,0 +1,41 @@
+# Maven/Java
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+*.sw?
+*.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test output
+/test-output/
+
+# Project-specific
+progress.md
+prompt.md
+
+# Misc
+*.class
+*.jar
+*.war
+*.ear
+
+# Exclude environment files
+.env
+
+# Exclude backup files
+*~
+*.bak
+
+# Exclude other markdown notes
+notes.md 

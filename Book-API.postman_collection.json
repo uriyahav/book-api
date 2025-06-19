@@ -1,0 +1,130 @@
+{
+  "info": {
+    "_postman_id": "book-api-collection-001",
+    "name": "Book Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Full test suite for Book Management API (CRUD, security, custom queries)"
+  },
+  "item": [
+    {
+      "name": "Books - Get All (401)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/books", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Get All (user)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" } ],
+        "url": { "raw": "http://localhost:8080/books", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Create (user)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"New Book\",\n  \"author\": \"Author\",\n  \"publishedYear\": 2020\n}" },
+        "url": { "raw": "http://localhost:8080/books", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Create (validation error)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"\",\n  \"author\": \"\",\n  \"publishedYear\": 1400\n}" },
+        "url": { "raw": "http://localhost:8080/books", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Get by ID (user)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" } ],
+        "url": { "raw": "http://localhost:8080/books/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books", "1"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Update (user)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Book\",\n  \"author\": \"Updated Author\",\n  \"publishedYear\": 2021\n}" },
+        "url": { "raw": "http://localhost:8080/books/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books", "1"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Delete (user, forbidden)",
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" } ],
+        "url": { "raw": "http://localhost:8080/books/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books", "1"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Delete (admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "Authorization", "value": "Basic YWRtaW46cGFzc3dvcmQ=", "type": "text" } ],
+        "url": { "raw": "http://localhost:8080/books/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books", "1"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Books - Not Found (user)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "type": "text" } ],
+        "url": { "raw": "http://localhost:8080/books/9999", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["books", "9999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Users - More Than 3 Orders",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/users/more-than-3-orders", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["users", "more-than-3-orders"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Users - No Orders",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/users/no-orders", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["users", "no-orders"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Users - Total Order Amount",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/users/total-order-amount", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["users", "total-order-amount"] }
+      },
+      "response": []
+    }
+  ]
+} 
