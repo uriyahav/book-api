@@ -257,7 +257,6 @@ For more, see the included Postman collection: `Book-API.postman_collection.json
 ---
 
 ## 🛠️ Next Steps & Suggested Improvements
-See `progress.md` for a prioritized, phased roadmap of advanced features and polish:
 - JavaDocs, inline comments, API examples
 - Pagination, CORS, more roles
 - Swagger/OpenAPI docs
