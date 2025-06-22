@@ -2,6 +2,8 @@ package com.example.bookapi.service;
 
 import com.example.bookapi.dto.BookRequest;
 import com.example.bookapi.dto.BookResponse;
+import com.example.bookapi.dto.BookPageResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,6 +16,13 @@ public interface BookService {
      * @return list of all books
      */
     List<BookResponse> findAll();
+
+    /**
+     * Get books with pagination.
+     * @param pageable pagination parameters
+     * @return paginated book response
+     */
+    BookPageResponse findAllPaginated(Pageable pageable);
 
     /**
      * Get a book by its ID.

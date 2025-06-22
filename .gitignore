@@ -39,3 +39,4 @@ prompt.md
 
 # Exclude other markdown notes
 notes.md 
+*.txt

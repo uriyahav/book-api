@@ -25,6 +25,6 @@ public class Book {
     private String author;
 
     @Min(value = 1500, message = "Published year must be no earlier than 1500")
-    @Max(value = 2024, message = "Published year must not be in the future")
+    @CurrentYearOrEarlier
     private Integer publishedYear;
 } 

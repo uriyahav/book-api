@@ -10,6 +10,10 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -39,6 +43,52 @@ class BookServiceImplTest {
         assertEquals(2, responses.size());
         assertEquals("A", responses.get(0).getTitle());
         assertEquals("C", responses.get(1).getTitle());
+    }
+
+    @Test
+    void findAllPaginated_shouldReturnPaginatedBookResponses() {
+        // Given
+        List<Book> books = List.of(
+                Book.builder().id(1L).title("A").author("B").publishedYear(2000).build(),
+                Book.builder().id(2L).title("C").author("D").publishedYear(2010).build()
+        );
+        Page<Book> bookPage = new PageImpl<>(books, PageRequest.of(0, 2), 5);
+        when(bookRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(bookPage);
+
+        // When
+        BookPageResponse response = bookService.findAllPaginated(PageRequest.of(0, 2));
+
+        // Then
+        assertNotNull(response);
+        assertEquals(2, response.getContent().size());
+        assertEquals(0, response.getPageNumber());
+        assertEquals(2, response.getPageSize());
+        assertEquals(5, response.getTotalElements());
+        assertEquals(3, response.getTotalPages());
+        assertTrue(response.hasNext());
+        assertFalse(response.hasPrevious());
+        assertTrue(response.isFirst());
+        assertFalse(response.isLast());
+    }
+
+    @Test
+    void findAllPaginated_shouldHandleEmptyPage() {
+        // Given
+        Page<Book> emptyPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 10), 0);
+        when(bookRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(emptyPage);
+
+        // When
+        BookPageResponse response = bookService.findAllPaginated(PageRequest.of(0, 10));
+
+        // Then
+        assertNotNull(response);
+        assertEquals(0, response.getContent().size());
+        assertEquals(0, response.getTotalElements());
+        assertEquals(0, response.getTotalPages());
+        assertFalse(response.hasNext());
+        assertFalse(response.hasPrevious());
+        assertTrue(response.isFirst());
+        assertTrue(response.isLast());
     }
 
     @Test

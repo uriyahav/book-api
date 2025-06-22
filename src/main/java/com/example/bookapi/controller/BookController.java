@@ -2,9 +2,13 @@ package com.example.bookapi.controller;
 
 import com.example.bookapi.dto.BookRequest;
 import com.example.bookapi.dto.BookResponse;
+import com.example.bookapi.dto.BookPageResponse;
 import com.example.bookapi.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +26,27 @@ public class BookController {
     private final BookService bookService;
 
     /**
-     * Get all books.
+     * Get all books (legacy endpoint for backward compatibility).
      * @return list of all books
      */
     @GetMapping
-    public List<BookResponse> getAllBooks() {
-        return bookService.findAll();
+    public ResponseEntity<?> getAllBooks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        
+        // If no pagination parameters are provided, return all books (legacy behavior)
+        if (page == 0 && size == 10 && "id".equals(sortBy) && "asc".equals(sortDir)) {
+            List<BookResponse> books = bookService.findAll();
+            return ResponseEntity.ok(books);
+        }
+        
+        // Otherwise, return paginated results
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        BookPageResponse paginatedBooks = bookService.findAllPaginated(pageable);
+        return ResponseEntity.ok(paginatedBooks);
     }
 
     /**

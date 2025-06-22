@@ -66,6 +66,122 @@ class BookControllerIntegrationTest {
 
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
+    void getAllBooksWithPagination() throws Exception {
+        // Create 5 books
+        for (int i = 1; i <= 5; i++) {
+            bookRepository.save(Book.builder()
+                    .title("Book " + i)
+                    .author("Author " + i)
+                    .publishedYear(2000 + i)
+                    .build());
+        }
+
+        // Test first page with size 2
+        mockMvc.perform(get("/books?page=0&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.pageNumber").value(0))
+                .andExpect(jsonPath("$.pageSize").value(2))
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andExpect(jsonPath("$.totalPages").value(3))
+                .andExpect(jsonPath("$.hasNext").value(true))
+                .andExpect(jsonPath("$.hasPrevious").value(false))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(false));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void getAllBooksWithPaginationAndSorting() throws Exception {
+        // Create 3 books with different titles
+        bookRepository.save(Book.builder().title("Zebra").author("Author 1").publishedYear(2000).build());
+        bookRepository.save(Book.builder().title("Alpha").author("Author 2").publishedYear(2001).build());
+        bookRepository.save(Book.builder().title("Beta").author("Author 3").publishedYear(2002).build());
+
+        // Test sorting by title ascending
+        mockMvc.perform(get("/books?page=0&size=3&sortBy=title&sortDir=asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.content[0].title").value("Alpha"))
+                .andExpect(jsonPath("$.content[1].title").value("Beta"))
+                .andExpect(jsonPath("$.content[2].title").value("Zebra"));
+
+        // Test sorting by title descending
+        mockMvc.perform(get("/books?page=0&size=3&sortBy=title&sortDir=desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.content[0].title").value("Zebra"))
+                .andExpect(jsonPath("$.content[1].title").value("Beta"))
+                .andExpect(jsonPath("$.content[2].title").value("Alpha"));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void getAllBooksWithPaginationSecondPage() throws Exception {
+        // Create 5 books
+        for (int i = 1; i <= 5; i++) {
+            bookRepository.save(Book.builder()
+                    .title("Book " + i)
+                    .author("Author " + i)
+                    .publishedYear(2000 + i)
+                    .build());
+        }
+
+        // Test second page with size 2
+        mockMvc.perform(get("/books?page=1&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.pageNumber").value(1))
+                .andExpect(jsonPath("$.pageSize").value(2))
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andExpect(jsonPath("$.totalPages").value(3))
+                .andExpect(jsonPath("$.hasNext").value(true))
+                .andExpect(jsonPath("$.hasPrevious").value(true))
+                .andExpect(jsonPath("$.first").value(false))
+                .andExpect(jsonPath("$.last").value(false));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void getAllBooksWithPaginationLastPage() throws Exception {
+        // Create 5 books
+        for (int i = 1; i <= 5; i++) {
+            bookRepository.save(Book.builder()
+                    .title("Book " + i)
+                    .author("Author " + i)
+                    .publishedYear(2000 + i)
+                    .build());
+        }
+
+        // Test last page with size 2
+        mockMvc.perform(get("/books?page=2&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.pageNumber").value(2))
+                .andExpect(jsonPath("$.pageSize").value(2))
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andExpect(jsonPath("$.totalPages").value(3))
+                .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.hasPrevious").value(true))
+                .andExpect(jsonPath("$.first").value(false))
+                .andExpect(jsonPath("$.last").value(true));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void getAllBooksWithPaginationEmptyPage() throws Exception {
+        // Test page beyond available data
+        mockMvc.perform(get("/books?page=10&size=10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.pageNumber").value(10))
+                .andExpect(jsonPath("$.pageSize").value(10))
+                .andExpect(jsonPath("$.totalElements").value(0))
+                .andExpect(jsonPath("$.totalPages").value(0));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
     void updateBook() throws Exception {
         Book book = bookRepository.save(Book.builder().title("Old").author("Old").publishedYear(1990).build());
         BookRequest request = BookRequest.builder().title("New").author("New").publishedYear(2021).build();

@@ -6,6 +6,8 @@ import com.example.bookapi.repository.BookRepository;
 import com.example.bookapi.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,20 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll().stream()
                 .map(BookMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BookPageResponse findAllPaginated(Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+        Page<BookResponse> responsePage = bookPage.map(BookMapper::toResponse);
+        log.debug("Retrieved {} books from page {} with size {}", 
+                responsePage.getNumberOfElements(), 
+                responsePage.getNumber(), 
+                responsePage.getSize());
+        return BookPageResponse.fromPage(responsePage);
     }
 
     /**
